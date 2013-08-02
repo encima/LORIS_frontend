@@ -4,27 +4,13 @@ var config = require('../config'),
  * POST file.
  */
 
-exports.upload = function(req, res){
-	console.log('Uploading');
-	var file                 = JSON.parse(postData),
-        fileRootName         = file.name.split('.').shift(),
-        fileExtension        = file.name.split('.').pop(),
-        filePathBase         = config.upload_dir + '/',
-        fileRootNameWithBase = filePathBase + fileRootName,
-        filePath             = fileRootNameWithBase + '.' + fileExtension,
-        fileID               = 2,
-        fileBuffer;
-        
-	while (fs.existsSync(filePath)) {
-        filePath = fileRootNameWithBase + '(' + fileID + ').' + fileExtension;
-        fileID += 1;
-    }
-    
-    file.contents = file.contents.split(',').pop();
-    
-    fileBuffer = new Buffer(file.contents, "base64");
-    
-    fs.writeFileSync(filePath, fileBuffer);
-    response.statusCode = 200;
-    response.end();
+exports.upload = function(request, response){
+  console.log('Uploading');
+  console.log("file name", request.files.file.name);                                           
+  console.log("file path", request.files.file.path);
+  var file = request.files.file;
+// Writes file as upload name, uses auto id otherwise
+  fs.renameSync(request.files.file.path, config.upload_dir + '/' + request.files.file.name);
+  response.statusCode = 200;
+  response.end();
 };
