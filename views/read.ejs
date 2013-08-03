@@ -11,22 +11,26 @@
     <script>
       function handleFileSelect(evt) {
         var files = evt.target.files; // FileList object
-
+        console.log(files);
         // Loop through the FileList
         for (var i = 0, f; f = files[i]; i++) {
 
           var reader = new FileReader();
-
-          // Closure to capture the file information.
-          reader.onload = (function(theFile) {
+          console.log(files[i]);
+          var ext = f.name.split('.').pop();
+          if(ext == 'drl') {
+            // Closure to capture the file information.
+            reader.onload = (function(theFile) {
             return function(e) {
-              // Print the contents of the file
-              var span = document.createElement('span');                    
-              span.innerHTML = ['<p>',e.target.result,'</p>'].join('');
-              document.getElementById('list').insertBefore(span, null);
-            };
-          })(f);
-
+                // Print the contents of the file
+                var span = document.createElement('span');                    
+                span.innerHTML = ['<p>',e.target.result,'</p>'].join('');
+                document.getElementById('list').insertBefore(span, null);
+              };
+            })(f);  
+          }else{
+            console.log("This is not a drools file");
+          }
           // Read in the file
           //reader.readAsDataText(f,"UTF-8");
           reader.readAsText(f);
