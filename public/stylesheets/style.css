@@ -1,7 +1,17 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: 'Monda', sans-serif;
 }
 a {
   color: #00b7ff;
+}
+#left-nav {
+  width: 30%;
+  float: left;
+  color: #00f;
+}
+#content {
+  float: right;
+  width: 70%;
+  padding-top: 40%;
 }
