@@ -10,6 +10,7 @@ var express = require('express')
   , routes = require('./routes')
   , upload = require('./routes/upload')
   , read = require('./routes/read')
+  , data = require('./routes/data')
   , http = require('http')
   , path = require('path');
 
@@ -37,14 +38,14 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+
 app.get('/read', read.read);
 app.post('/read', read.insert)
-//   function(req, res){
-//   res.render('read', { title: 'Read File' });
-// });
-app.get('/upload', upload.page)
+
+app.get('/upload', upload.page);
 app.post('/upload', upload.upload);
 
+app.get('/data', data.page);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
