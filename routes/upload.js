@@ -20,5 +20,5 @@ exports.upload = function(request, response){
 // Writes file as upload name, uses auto id otherwise
   fs.renameSync(request.files.file.path, config.upload_dir + '/' + request.files.file.name);
   response.statusCode = 200;
-  response.end();
+  response.redirect('/upload');
 };

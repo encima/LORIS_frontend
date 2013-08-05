@@ -1,5 +1,5 @@
 var util = require('util');
-var db = require('../db');
+var db = require('../local_db');
 var id = 1;
 
 exports.read = function(req, res){

@@ -1,18 +1,18 @@
 <%include base.ejs %>
     <div id="map-canvas" style="height:400px; width:800px%;"></div>
-    <div id="data">
+    <div id="content">
     	<table cellpadding="0" cellspacing="0" border="0" class="display" id="occs" width="100%">
     	<thead>
     		<tr>
-    			<th>Species ID</th>
-    			<th>Obs Time</th>
-    			<th>Moonphase</th>
     			<th>Species Name</th>
+    			<th>Species ID</th>	
     			<th>Obs ID</th>
+    			<th>Obs Date</th>
+    			<th>Obs Time</th>
     			<th>Obs Date</th>
     			<th>Lat</th>
     			<th>Lng</th>
-    			<th>Taken ID</th>
+    			<th>Location ID</th>
     		</tr>
     	</thead>
     	<tbody id="occs_body">
@@ -21,7 +21,7 @@
 
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVdMe4x6x8hZfh-4RXUzWMSpJF9iJaR7g&sensor=false"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= maps_key%>&sensor=false"></script>
     <script>
     	var infoWindow;
 
@@ -39,15 +39,15 @@
 		  var markers = [];
 		  var i = 0;
 
-		  {%for loc in locs %}
-			  var myLatlng = new google.maps.LatLng(<%loc['Lat']%>, <%loc['Lng']%>);
+		  <%for (var i=0; i < locs.length; i++) {%>
+			  var myLatlng = new google.maps.LatLng(<%=locs[i]['Lat']%>, <%=locs[i]['Lng']%>);
 			  var marker = new google.maps.Marker({
-			      position: myLatlng,
+			      position: myLatlng, 
 			      map: map,
-			      title: "<%loc['Lot']%>",
-			      html: "<%loc['Loc_ID']%>"
+			      title: "<%=locs[i]['Lot']%>",
+			      html: "<%=locs[i]['Loc_ID']%>"
 			  });
-			  marker.myID = <%loc['Loc_ID']%>;
+			  marker.myID = <%=locs[i]['Loc_ID']%>;
 			  markers.push(marker);
 		    google.maps.event.addListener(marker, 'click', function () {
 				// where I have added .html to the marker object.
@@ -56,8 +56,7 @@
 				// $("#occs tr").remove();
 				getOccurrences(this.myID)
 			});
-			i++;
-		  {% endfor %}
+		  <% } %>
 
 		  	//  Create a new viewpoint bound
 			var bounds = new google.maps.LatLngBounds();

@@ -10,6 +10,7 @@
     "express": "3.3.4",
     "ejs": "*",
     "stylus": "*",
-    "mysql":"*"
+    "mysql":"*",
+    "xml2js":"*"
   }
 }

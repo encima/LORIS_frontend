@@ -11,6 +11,7 @@ var express = require('express')
   , upload = require('./routes/upload')
   , read = require('./routes/read')
   , data = require('./routes/data')
+  , gsn = require('./routes/gsn')
   , http = require('http')
   , path = require('path');
 
@@ -37,15 +38,18 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
+app.get('/', routes.index); 
 
 app.get('/read', read.read);
 app.post('/read', read.insert)
 
 app.get('/upload', upload.page);
-app.post('/upload', upload.upload);
+app.post('/api/upload', upload.upload);
 
 app.get('/data', data.page);
+app.post('/api/locations', data.locations);
+
+app.get('/gsn/vsensor', gsn.vsensor);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
