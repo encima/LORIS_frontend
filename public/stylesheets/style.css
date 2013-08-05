@@ -1,17 +1,31 @@
+html,
 body {
-  padding: 50px;
   font-family: 'Monda', sans-serif;
+  margin: 0 auto;
+  height: 100%;
+  background: #7e8f7c;
 }
 a {
   color: #00b7ff;
+  text-decoration: none;
+}
+ul li {
+  list-style-type: none;
+}
+.button {
+  background: #c63d0f;
 }
 #left-nav {
-  width: 30%;
+  height: 100%;
   float: left;
-  color: #00f;
+  padding-right: 10px;
+  background: #c63d0f;
+  color: #fdf3e7;
+  overflow: hidden;
 }
 #content {
-  float: right;
-  width: 70%;
-  padding-top: 40%;
+  height: 100%;
+  padding-top: 50px;
+  padding-left: 10px;
+  overflow: hidden;
 }

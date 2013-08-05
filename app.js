@@ -42,6 +42,7 @@ app.post('/read', read.insert)
 //   function(req, res){
 //   res.render('read', { title: 'Read File' });
 // });
+app.get('/upload', upload.page)
 app.post('/upload', upload.upload);
 
 

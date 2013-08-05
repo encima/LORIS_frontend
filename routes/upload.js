@@ -1,5 +1,13 @@
 var config = require('../config'),
     fs = require('fs');
+
+/*
+ * GET home page.
+ */
+
+exports.page = function(req, res){
+  res.render('upload', { title: config.title });
+};
 /*
  * POST file.
  */
