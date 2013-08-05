@@ -1,0 +1,119 @@
+<%include base.ejs %>
+    <div id="map-canvas" style="height:400px; width:800px%;"></div>
+    <div id="data">
+    	<table cellpadding="0" cellspacing="0" border="0" class="display" id="occs" width="100%">
+    	<thead>
+    		<tr>
+    			<th>Species ID</th>
+    			<th>Obs Time</th>
+    			<th>Moonphase</th>
+    			<th>Species Name</th>
+    			<th>Obs ID</th>
+    			<th>Obs Date</th>
+    			<th>Lat</th>
+    			<th>Lng</th>
+    			<th>Taken ID</th>
+    		</tr>
+    	</thead>
+    	<tbody id="occs_body">
+    	</tbody>
+    </div>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVdMe4x6x8hZfh-4RXUzWMSpJF9iJaR7g&sensor=false"></script>
+    <script>
+    	var infoWindow;
+
+		function initialize() {
+		  
+			infowindow = new google.maps.InfoWindow({
+				content: "holding..."
+			});
+
+		  var mapOptions = {
+		    zoom: 12,
+		    mapTypeId: google.maps.MapTypeId.ROADMAP
+		  }
+		  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		  var markers = [];
+		  var i = 0;
+
+		  {%for loc in locs %}
+			  var myLatlng = new google.maps.LatLng(<%loc['Lat']%>, <%loc['Lng']%>);
+			  var marker = new google.maps.Marker({
+			      position: myLatlng,
+			      map: map,
+			      title: "<%loc['Lot']%>",
+			      html: "<%loc['Loc_ID']%>"
+			  });
+			  marker.myID = <%loc['Loc_ID']%>;
+			  markers.push(marker);
+		    google.maps.event.addListener(marker, 'click', function () {
+				// where I have added .html to the marker object.
+				infowindow.setContent(this.html);
+				infowindow.open(map, this);
+				// $("#occs tr").remove();
+				getOccurrences(this.myID)
+			});
+			i++;
+		  {% endfor %}
+
+		  	//  Create a new viewpoint bound
+			var bounds = new google.maps.LatLngBounds();
+			//  Go through each...
+			$.each(markers, function (index, marker) {
+			bounds.extend(marker.position);
+			});
+			//  Fit these bounds to the map
+			map.fitBounds(bounds);
+		}
+		google.maps.event.addDomListener(window, 'load', initialize);
+
+		function getOccurrences(id) {
+			  $.ajax({
+		        type : 'POST',
+		        url : '/api/locations',
+		        dataType : 'json',
+		        data : {
+		            id: id
+		        },
+		        success : function(data){
+		        	$('.row').remove();
+		        	if(data.length > 0) {
+			            for(var i = 0; i < data.length; i++) {
+			            	var row = "<tr class='row'>";
+			            	for(key in data[i]) {
+			            		console.log(data[i][key]);
+			            		row += "<td>" + data[i][key] + "</td>";
+			            	}
+			            	row += "</tr>";
+			            	console.log("************");
+			            	$('#occs tr:last').after(row);
+			            }
+			            console.log('------')
+			           }else{
+			           		var row = "<tr class='row'>";
+		           			row += "<td> NO </td>";
+		           			row += "<td> OCCURRENCES </td>";
+		           			row += "<td> FOR </td>";
+		           			row += "<td> SITE </td>";
+		           			row += "<td>  </td>";
+		           			row += "<td>  </td>";
+		           			row += "<td>  </td>";
+		           			row += "<td>  </td>";
+		           			row += "<td> </td>";
+		           			row += "</tr>";
+		           			$('#occs tr:last').after(row);
+			           }
+		        },
+		        error : function(XMLHttpRequest, textStatus, errorThrown){
+		            console.log(errorThrown);
+		            requesting = false;
+		        }
+    });
+		}
+
+    </script>
+  </body>
+</html>
