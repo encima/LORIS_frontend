@@ -21,9 +21,11 @@
     		$.post("/api/get_vsensor", { "file": $(this).text() },
   				function(data){
     				$("#right-content").text(JSON.stringify(data['virtual-sensor']));
-    				$.each(data, function(index, value) {
-    					console.log(value);
-    				})
+    				console.log(data);
+    				console.log(typeof data);
+    				console.log(Object.keys(data));    				
+    				console.log(Object.keys(data).length);    				
+    				//Object.keys(data);
   				}, 
   			"json");
     	});
