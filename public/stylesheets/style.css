@@ -29,3 +29,14 @@ ul li {
   padding-left: 10px;
   overflow: hidden;
 }
+#left-content {
+  height: 100%;
+  float: left;
+  padding-right: 10px;
+  overflow: hidden;
+}
+#right-content {
+  height: 100%;
+  padding-left: 10px;
+  overflow: hidden;
+}

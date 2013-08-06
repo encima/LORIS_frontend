@@ -1,0 +1,33 @@
+<% include base.ejs %>
+<div id="content">
+	<div id="left-content">
+	<ul>
+		<% for (var i in sensors) { %> 
+			<li class='file-link'><%= sensors[i] %></br></li>
+		<% } %>
+	</ul>
+	</div>
+	<div id="right-content">
+		Select a Sensor
+	</div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+    <script>
+		$(document).ready(function() {
+		  
+		});
+    	$('.file-link').click(function() {
+    		$.post("/api/get_vsensor", { "file": $(this).text() },
+  				function(data){
+    				$("#right-content").text(JSON.stringify(data['virtual-sensor']));
+    				$.each(data, function(index, value) {
+    					console.log(value);
+    				})
+  				}, 
+  			"json");
+    	});
+
+    </script>
+</body>
+</html>

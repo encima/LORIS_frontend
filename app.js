@@ -50,6 +50,7 @@ app.get('/data', data.page);
 app.post('/api/locations', data.locations);
 
 app.get('/gsn/vsensor', gsn.vsensor);
+app.post('/api/get_vsensor', gsn.vsensor_load);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
