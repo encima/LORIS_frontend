@@ -11,6 +11,7 @@
     "ejs": "*",
     "stylus": "*",
     "mysql":"*",
-    "xml2js":"*"
+    "xml2js":"*",
+    "async":"*"
   }
 }
