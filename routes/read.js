@@ -1,5 +1,6 @@
 var util = require('util');
 var db = require('../local_db');
+var soap = require('soap');
 var id = 1;
 
 exports.read = function(req, res){
@@ -20,6 +21,7 @@ exports.insert = function(req, res) {
 		  db.end();
 		});
 	});
+
 	res.result = 'Rule Inserted';
 	res.statusCode = 200;
 	res.end();
@@ -28,7 +30,7 @@ exports.insert = function(req, res) {
 function getID(table, field, max) {
 	db.connect();
 	var id = 1;
-	var query = util.format("SELECT %s($s) FROM %s;", max, field, table);
+	var query = util.format("SELECT %s($s) AS id FROM %s;", max, field, table);
 	db.connection.query(query, function(err, rows, fields) {
 		if (err) throw err;
 		id = rows[0].id + 1;

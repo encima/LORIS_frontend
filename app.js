@@ -12,6 +12,7 @@ var express = require('express')
   , read = require('./routes/read')
   , data = require('./routes/data')
   , gsn = require('./routes/gsn')
+  , rules = require('./routes/rules')
   , http = require('http')
   , path = require('path');
 
@@ -40,11 +41,13 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index); 
 
-app.get('/read', read.read);
-app.post('/read', read.insert)
+app.get('/rules/read', read.read);
+app.post('/rules/read', read.insert)
 
-app.get('/upload', upload.page);
+app.get('/rules/upload', upload.page);
 app.post('/api/upload', upload.upload);
+
+app.get('/rules/fire', rules.fire);
 
 app.get('/data', data.page);
 app.post('/api/locations', data.locations);

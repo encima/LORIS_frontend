@@ -12,6 +12,7 @@
     "stylus": "*",
     "mysql":"*",
     "xml2js":"*",
-    "async":"*"
+    "async":"*",
+	"soap" : "*"
   }
 }
