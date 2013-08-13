@@ -4,15 +4,18 @@
  */
  
 var config = require('./config'),
+    local_db = require('./local_db'),
+    rds_db = require('./rds_db'),
     fs = require('fs');
 
 var express = require('express')
   , routes = require('./routes')
-  , upload = require('./routes/upload')
-  , read = require('./routes/read')
+  , upload = require('./routes/rules/upload')
+  , read = require('./routes/rules/read')
   , data = require('./routes/data')
-  , gsn = require('./routes/gsn')
-  , rules = require('./routes/rules')
+  , rules = require('./routes/rules/rules')
+  , gsn = require('./routes/gsn/gsn')
+  , rules = require('./routes/rules/rules')
   , http = require('http')
   , path = require('path');
 
@@ -39,15 +42,18 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+local_db.connect();
+rds_db.connect();
+
 app.get('/', routes.index); 
 
 app.get('/rules/read', read.read);
-app.post('/rules/read', read.insert)
+app.post('/rules/read', read.readFile)
 
 app.get('/rules/upload', upload.page);
 app.post('/api/upload', upload.upload);
 
-app.get('/rules/fire', rules.fire);
+app.get('/rules', rules.list);
 
 app.get('/data', data.page);
 app.post('/api/locations', data.locations);

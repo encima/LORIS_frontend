@@ -1,0 +1,68 @@
+<% include base.ejs %>
+<div id="content">
+    <div id="left-content">
+      <button id="start-engine">Start your (Drools) Engines</button>
+      <button id="fire-engine">Fire!</button>
+      <hr/>
+      <ul>
+        <% for (var i in rules) { %> 
+          <li class='file-link' id=<%= rules[i].id%> rel=<%= rules[i].path%>><%= rules[i].name %></br></li>
+        <% } %>
+      </ul>
+    </div>
+    <div id="right-content">
+      <p id="rule-text"></p>
+      <button id="add-rule" style="display: none;">Add to Drools</button>
+    </div>
+
+</div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+    <script>
+      var running = false;
+      $('#start-engine').click(function() {
+        if(running) {
+          $(this).html("Start your (Drools) Engines");
+          $.get("http://localhost:8111/api/drools/stop",
+          function(data) {
+            console.log(data);
+          }, "jsonp");
+          running = false;
+        }else{
+            $(this).html('Stop');
+            $.get("http://localhost:8111/api/drools/start",
+              function(data) {
+                console.log(data);
+              }, "jsonp");
+            running = true;
+        }
+      });
+        
+      $('#add-rule').on("click", function() {
+        console.log($(this).attr('rel'));
+        if(running) {
+          $(this).html("Added to Drools!");
+          $.get("http://localhost:8111/api/drools/add", {"file": $(this).attr('rel')}, function(data) {
+
+          }, "jsonp");
+        }
+      });
+
+      $('#fire-engine').click(function() {
+        $.get("http://localhost:8111/api/drools/fire",
+          function(data) {
+            console.log(data);
+          }, "jsonp");
+      });
+
+       $('.file-link').click(function() {
+       var path =  $(this).attr('rel');
+        $.post('/rules/read', { "path": path }, function(data) {
+          $("#rule-text").html(data);
+          $('#add-rule').css('display', 'block');
+          $("#add-rule").attr('rel', path);
+        });
+      });
+
+
+    </script>
+</body>
