@@ -3,6 +3,7 @@
     <div id="left-content">
       <button id="start-engine">Start your (Drools) Engines</button>
       <button id="fire-engine">Fire!</button>
+      <button id="load-dwc">Load</button>
       <hr/>
       <ul>
         <% for (var i in rules) { %> 
@@ -58,6 +59,13 @@
 
       $('#fire-engine').click(function() {
         $.post("http://localhost:8111/api/drools/fire",
+          function(data) {
+            console.log(data);
+          }, "json");
+      });
+
+      $('#load-dwc').click(function() {
+        $.post("http://localhost:8111/api/drools/load",
           function(data) {
             console.log(data);
           }, "json");

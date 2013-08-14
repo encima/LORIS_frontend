@@ -17,7 +17,7 @@ rule "Hello World 2"
 	
 rule "Time Frame"
 	when
-		dwc:DarwinCore(occ.getLocationID()==3)
+		dwc:DarwinCore(occ.getLocationID()==1)
 	then
-		System.out.println("Occurence in site 3, animals here are: Clouded Leopard, Malay Civets and Small Mammals");
+		System.out.println("Occurence in site 1, animals here are: Clouded Leopard, Malay Civets and Small Mammals");
 	end
