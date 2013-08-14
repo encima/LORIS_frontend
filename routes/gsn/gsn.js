@@ -4,7 +4,7 @@ var config = require('../../config'),
 	async = require('async');
 
 exports.vsensor = function(req, res){
-
+  
   var i = 0;
   var sensors = [];
   var files = [];

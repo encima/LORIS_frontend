@@ -7,7 +7,7 @@ var config = require('../config'),
  */
 
 exports.page = function(req, res){
-  rds_db.connect();
+  // rds_db.connect();
   var query = 'SELECT * FROM Locations';
   console.log(rds_db.connection.state);
   rds_db.connection.query(query, function (err, rows, fields) {

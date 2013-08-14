@@ -1,5 +1,7 @@
 import com.encima.Message
 
+import com.encima.dwc.DarwinCore
+
 import com.encima.dwc.Occurrence
 
 import com.encima.dwc.Location
@@ -14,6 +16,8 @@ rule "Hello World 2"
 	end
 	
 rule "Time Frame"
-	when occ:Occurrence (eventTime=="01-JAN-2012")
-	then System.out.println("Date Match!");
+	when
+		dwc:DarwinCore(occ.getLocationID()==3)
+	then
+		System.out.println("Occurence in site 3, animals here are: Clouded Leopard, Malay Civets and Small Mammals");
 	end

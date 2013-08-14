@@ -22,36 +22,45 @@
       $('#start-engine').click(function() {
         if(running) {
           $(this).html("Start your (Drools) Engines");
-          $.get("http://localhost:8111/api/drools/stop",
+          $.post("http://localhost:8111/api/drools/stop",
           function(data) {
             console.log(data);
-          }, "jsonp");
+          }, "json");
           running = false;
         }else{
             $(this).html('Stop');
-            $.get("http://localhost:8111/api/drools/start",
+            $.post("http://localhost:8111/api/drools/start",
               function(data) {
                 console.log(data);
-              }, "jsonp");
+              }, "json");
             running = true;
-        }
+        } 
+
       });
         
       $('#add-rule').on("click", function() {
         console.log($(this).attr('rel'));
         if(running) {
           $(this).html("Added to Drools!");
-          $.get("http://localhost:8111/api/drools/add", {"file": $(this).attr('rel')}, function(data) {
-
-          }, "jsonp");
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:8111/api/drools/add",
+            data: {"file": $(this).attr('rel')},
+            success: function(data) {
+              console.log(data);
+            },
+            dataType: "json"
+          });
+        }else{
+          alert('Drools is not running!');
         }
       });
 
       $('#fire-engine').click(function() {
-        $.get("http://localhost:8111/api/drools/fire",
+        $.post("http://localhost:8111/api/drools/fire",
           function(data) {
             console.log(data);
-          }, "jsonp");
+          }, "json");
       });
 
        $('.file-link').click(function() {
