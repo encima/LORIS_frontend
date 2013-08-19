@@ -16,6 +16,7 @@ var express = require('express')
   , rules = require('./routes/rules/rules')
   , gsn = require('./routes/gsn/gsn')
   , rules = require('./routes/rules/rules')
+  , image = require('./routes/image')
   , http = require('http')
   , path = require('path');
 
@@ -42,8 +43,9 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-local_db.connect();
-rds_db.connect();
+// Apparently, node-mysql handles these connections from the create method and should only be called once
+// local_db.connect();
+// rds_db.connect();
 
 app.get('/', routes.index); 
 
@@ -51,7 +53,7 @@ app.get('/rules/read', read.read);
 app.post('/rules/read', read.readFile)
 
 app.get('/rules/upload', upload.page);
-app.post('/api/upload', upload.upload);
+app.post('/api/rule/upload', upload.uploadRule);
 
 app.get('/rules', rules.list);
 
@@ -60,6 +62,9 @@ app.post('/api/locations', data.locations);
 
 app.get('/gsn/vsensor', gsn.vsensor);
 app.post('/api/get_vsensor', gsn.vsensor_load);
+
+app.get('/image/upload', image.page);
+app.post('/api/image/upload', image.uploadImage);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

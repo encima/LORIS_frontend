@@ -13,6 +13,7 @@
     "mysql":"*",
     "xml2js":"*",
     "async":"*",
-	"soap" : "*"
+	"exif2" : "*",
+	"mmmagic":"*"
   }
 }

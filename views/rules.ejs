@@ -1,7 +1,7 @@
 <% include base.ejs %>
 <div id="content">
     <div id="left-content">
-      <button id="start-engine">Start your (Drools) Engines</button>
+      <button id="clear-engine">Clear</button>
       <button id="fire-engine">Fire!</button>
       <button id="load-dwc">Load</button>
       <hr/>
@@ -19,24 +19,11 @@
 </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
     <script>
-      var running = false;
-      $('#start-engine').click(function() {
-        if(running) {
-          $(this).html("Start your (Drools) Engines");
+      $('#clear-engine').click(function() {
           $.post("http://localhost:8111/api/drools/stop",
           function(data) {
             console.log(data);
           }, "json");
-          running = false;
-        }else{
-            $(this).html('Stop');
-            $.post("http://localhost:8111/api/drools/start",
-              function(data) {
-                console.log(data);
-              }, "json");
-            running = true;
-        } 
-
       });
         
       $('#add-rule').on("click", function() {
