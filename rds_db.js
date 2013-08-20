@@ -1,37 +1,41 @@
 var mysql = require('mysql');
 var config = require('./config');
 
-var connection = mysql.createConnection({
+var connection;
+var rds_config = {
   host     : config.rds_host,
   user     : config.rds_user,
   password : config.rds_pwd,
   database : config.rds_db,
-});
-
-var connect = function() {
-  connection.connect(function(err){
-    if(!err){
-          console.log("You are connected to the database.");
-    }
-    else{
-          throw err;
-    }
-    })
 };
 
-var end = function() {
-  connection.end(function(err){
-    if(!err){
-          console.log("Mysql connection is terminated.")
+var intializeConnection = function initializeConnection() {
+    function addDisconnectHandler(connection) {
+        connection.on("error", function (error) {
+            if (error instanceof Error) {
+                if (error.code === "PROTOCOL_CONNECTION_LOST") {
+                    // console.error(error.stack);
+                    console.log("Lost connection. Reconnecting...");
+
+                    initializeConnection();
+                } else if (error.fatal) {
+                    throw error;
+                }
+            }
+        });
     }
-    else{
-          throw err;
-    }
-  })
-};
+
+    connection = mysql.createConnection(rds_config);
+    console.log("Remote db connection initialised");
+    // Add handlers.
+    addDisconnectHandler(connection);
+
+    connection.connect();
+    return connection;
+}
+
 
 module.exports = {
-  connect: connect,
   connection: connection,
-  end: end,
+  initializeConnection: intializeConnection,
 }

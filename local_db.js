@@ -1,37 +1,42 @@
 var mysql = require('mysql');
 var config = require('./config');
 
-var connection = mysql.createConnection({
+var connection;
+var mysql_config = {
   host     : config.mysql_host,
   user     : config.mysql_user,
   password : config.mysql_pwd,
   database : config.mysql_db,
-});
-
-var connect = function(db) {
-  connection.connect(function(err){
-    if(!err){
-          console.log("You are connected to the database.");
-    }
-    else{
-          throw err;
-    }
-    })
 };
 
-var end = function() {
-  connection.end(function(err){
-    if(!err){
-          console.log("Mysql connection is terminated.")
+var intializeConnection = function initializeConnection() {
+  // TODO Handle having so many connections open
+    function addDisconnectHandler(connection) {
+        connection.on("error", function (error) {
+            if (error instanceof Error) {
+                if (error.code === "PROTOCOL_CONNECTION_LOST") {
+                    // console.error(error.stack);
+                    console.log("Lost connection. Reconnecting...");
+
+                    initializeConnection(connection.config);
+                } else if (error.fatal) {
+                    throw error;
+                }
+            }
+        });
     }
-    else{
-          throw err;
-    }
-  })
-};
+
+    connection = mysql.createConnection(mysql_config);
+    console.log("Local db connection initialised");
+    // Add handlers.
+    addDisconnectHandler(connection);
+
+    connection.connect();
+    return connection;
+}
+
 
 module.exports = {
-  connect: connect,
   connection: connection,
-  end: end,
+  initializeConnection: intializeConnection,
 }

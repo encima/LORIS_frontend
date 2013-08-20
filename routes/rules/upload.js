@@ -35,11 +35,12 @@ exports.uploadRule = function(request, response){
     console.log(result);
   });
 
-  db.connection.query('SELECT MAX(id) AS id FROM rule_uploads;', function(err, rows, field) {
+  var connection = db.initializeConnection();
+  connection.query('SELECT MAX(id) AS id FROM rule_uploads;', function(err, rows, field) {
     if(err) throw err;
     var ruleID = rows[0].id + 1;
     var insert = util.format("INSERT INTO rule_uploads VALUES(%d, '%s', '%s', '%s');", ruleID, file.name, file.path, body.project);  
-    db.connection.query(insert, function(err, rows, fields) {
+    connection.query(insert, function(err, rows, fields) {
       if(err) throw err;
     });
   });
