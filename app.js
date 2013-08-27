@@ -9,14 +9,12 @@ var config = require('./config'),
     fs = require('fs');
 
 var express = require('express')
-  , routes = require('./routes')
-  , upload = require('./routes/rules/upload')
   , read = require('./routes/rules/read')
   , data = require('./routes/data')
-  , rules = require('./routes/rules/rules')
+  , pages = require('./routes/pages')
+  , rules = require('./routes/rules/index')
   , gsn = require('./routes/gsn/gsn')
-  , rules = require('./routes/rules/rules')
-  , image = require('./routes/image')
+  , tools = require('./routes/tools')
   , http = require('http')
   , path = require('path');
 
@@ -45,15 +43,14 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index); 
+app.get('/rules/read', pages.readRule);
+app.post('/rules/read', tools.readFile)
 
-app.get('/rules/read', read.read);
-app.post('/rules/read', read.readFile)
+app.get('/rules/upload', pages.uploadRule);
+app.post('/api/rule/upload', tools.uploadRule);
+app.post('/api/rule/delete', tools.deleteRule);
 
-app.get('/rules/upload', upload.page);
-app.post('/api/rule/upload', upload.uploadRule);
-
-app.get('/rules', rules.list);
+app.get('/rules', pages.listRules);
 
 app.get('/data', data.page);
 app.post('/api/locations', data.locations);
@@ -61,8 +58,8 @@ app.post('/api/locations', data.locations);
 app.get('/gsn/vsensor', gsn.vsensor);
 app.post('/api/get_vsensor', gsn.vsensor_load);
 
-app.get('/image/upload', image.page);
-app.post('/api/image/upload', image.uploadImage);
+app.get('/image/upload', pages.uploadImage);
+app.post('/api/image/upload', tools.uploadImage);
 
 http.createServer(app).listen(config.port, function(){
   console.log('Express server listening on port ' + config.port);

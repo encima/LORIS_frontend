@@ -5,7 +5,6 @@ var fs =  require('fs');
 var id = 1;
 
 exports.read = function(req, res){
-  	// db.connect();
 	res.render('read', { title: 'Read File' });
 };
 

@@ -1,9 +1,8 @@
 <% include base.ejs %>
 <div id="content">
     <div id="left-content">
-      <button id="clear-engine">Clear</button>
       <button id="fire-engine">Fire!</button>
-      <button id="load-dwc">Load</button>
+      <button id="load-dwc">Load Darwin Core</button>
       <hr/>
       <ul>
         <% for (var i in rules) { %> 
@@ -14,6 +13,7 @@
     <div id="right-content">
       <p id="rule-text"></p>
       <button id="add-rule" style="display: none;">Add to Drools</button>
+      <button id="delete-rule" style="display: none;">Delete</button>
     </div>
 
 </div>
@@ -25,23 +25,33 @@
             console.log(data);
           }, "json");
       });
-        
+      
+      $('#delete-rule').on("click", function() {
+        console.log($(this).attr('rel'));
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:8000/api/rule/delete",
+          data: {"file": $(this).attr('rel')},
+          success: function(data) {
+            console.log(data)
+            location.reload();
+          },
+          dataType: "json"
+        });
+      });
+
       $('#add-rule').on("click", function() {
         console.log($(this).attr('rel'));
-        if(running) {
-          $(this).html("Added to Drools!");
-          $.ajax({
-            type: "POST",
-            url: "http://localhost:8111/api/drools/add",
-            data: {"file": $(this).attr('rel')},
-            success: function(data) {
-              console.log(data);
-            },
-            dataType: "json"
-          });
-        }else{
-          alert('Drools is not running!');
-        }
+        $(this).html("Added to Drools!");
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:8111/api/drools/add",
+          data: {"file": $(this).attr('rel')},
+          success: function(data) {
+            console.log(data);
+          },
+          dataType: "json"
+        });
       });
 
       $('#fire-engine').click(function() {
@@ -64,6 +74,8 @@
           $("#rule-text").html(data);
           $('#add-rule').css('display', 'block');
           $("#add-rule").attr('rel', path);
+          $('#delete-rule').css('display', 'block');
+          $("#delete-rule").attr('rel', path);
         });
       });
 

@@ -1,5 +1,3 @@
-import com.encima.Message
-
 import com.encima.dwc.DarwinCore
 
 import com.encima.dwc.Occurrence
@@ -10,14 +8,50 @@ import com.encima.dwc.Species
 
 import com.encima.dwc.Identification
 
-rule "Hello World 2"
-	when message:Message (type=="Test")
-	then System.out.println("Test, Drools!"); 
+import com.encima.utils.DBTools
+
+import com.encima.utils.TimeTools
+
+import java.util.Collection;
+
+rule "Time Frame" 
+	when 
+		archive:DarwinCore(archive.getOcc().getEventDate() == "27-MAR-2012")
+	then
+		System.out.println("Date is March");
+	end 
+
+rule "Otter River" 
+	when
+		$dwc:DarwinCore()
+		DarwinCore(DBTools.getLocationDescription($dwc.getOcc().getLocationID()) contains "River")
+		eval(TimeTools.checkTimePeriod($dwc.getOcc().getEventTime()) == "Afternoon")
+	then
+		System.out.println("Otter");
 	end
 	
-rule "Time Frame"
+rule "Plantation Night"
 	when
-		dwc:DarwinCore(occ.getLocationID()==1)
+		$dwc:DarwinCore()
+		DarwinCore(DBTools.getLocationDescription($dwc.getOcc().getLocationID()) contains "Plantation")
+		eval(TimeTools.checkTimePeriod($dwc.getOcc().getEventTime()) == "Night")
+	then
+		System.out.println("Sun Bear or Civet");
+	end
+
+rule "Clouded Leopard Ridgeline"
+	when
+		$dwc:DarwinCore()
+		DarwinCore(DBTools.getLocationDescription($dwc.getOcc().getLocationID()) contains "Ridge Line")
+		eval(TimeTools.checkTimePeriod($dwc.getOcc().getEventTime()) == "Night")
+	then
+		System.out.println("Clouded Leopard - Most likely male");
+	end
+
+rule "Location Description"
+	when
+		$dwc:DarwinCore()
+		eval($dwc.getOcc().getLocationID()==1)
 	then
 		System.out.println("Occurence in site 1, animals here are: Clouded Leopard, Malay Civets and Small Mammals");
 	end
