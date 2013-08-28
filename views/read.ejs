@@ -13,7 +13,7 @@
           var files = evt.target.files; // FileList object
           // Loop through the FileList
           for (var i = 0, f; f = files[i]; i++) {
-
+            $.post("/api/upload", )
             var reader = new FileReader();
             var ext = f.name.split('.').pop();
               // Closure to capture the file information.

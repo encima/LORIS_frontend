@@ -43,11 +43,13 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/read', pages.readFile);
+app.get('/read', pages.upload);
 
 app.get('/rules', pages.listRules);
 app.get('/rules/upload', pages.uploadRule);
 app.post('/api/read', tools.readFile)
+
+app.post('/api/upload', tools.uploadRule);
 
 app.post('/api/rule/upload', tools.uploadRule);
 app.post('/api/rule/delete', tools.deleteRule);
