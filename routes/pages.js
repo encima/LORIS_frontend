@@ -13,7 +13,7 @@ exports.uploadImage = function(req, res){
   res.render('upload_image', { title: config.title });
 };
 
-exports.readRule = function(req, res){
+exports.readFile = function(req, res){
 	res.render('read', { title: 'Read File' });
 };
 

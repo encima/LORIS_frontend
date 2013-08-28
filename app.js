@@ -43,14 +43,14 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/rules/read', pages.readRule);
-app.post('/rules/read', tools.readFile)
-
-app.get('/rules/upload', pages.uploadRule);
-app.post('/api/rule/upload', tools.uploadRule);
-app.post('/api/rule/delete', tools.deleteRule);
+app.get('/read', pages.readFile);
 
 app.get('/rules', pages.listRules);
+app.get('/rules/upload', pages.uploadRule);
+app.post('/api/read', tools.readFile)
+
+app.post('/api/rule/upload', tools.uploadRule);
+app.post('/api/rule/delete', tools.deleteRule);
 
 app.get('/data', data.page);
 app.post('/api/locations', data.locations);

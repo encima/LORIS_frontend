@@ -7,9 +7,9 @@
 		<% } %>
 	</ul>
 	</div>
-	<div id="right-content">
+	<pre id="right-content">
 		Select a Sensor
-	</div>
+	</pre>
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
@@ -20,12 +20,7 @@
     	$('.file-link').click(function() {
     		$.post("/api/get_vsensor", { "file": $(this).text() },
   				function(data){
-    				$("#right-content").text(JSON.stringify(data['virtual-sensor']));
-    				console.log(data);
-    				console.log(typeof data);
-    				console.log(Object.keys(data));    				
-    				console.log(Object.keys(data).length);    				
-    				//Object.keys(data);
+            $("#right-content").text(JSON.stringify(data['virtual-sensor'], undefined, 2));
   				}, 
   			"json");
     	});

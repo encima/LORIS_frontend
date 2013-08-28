@@ -11,7 +11,7 @@
       </ul>
     </div>
     <div id="right-content">
-      <p id="rule-text"></p>
+      <pre id="rule-text"></pre>
       <button id="add-rule" style="display: none;">Add to Drools</button>
       <button id="delete-rule" style="display: none;">Delete</button>
     </div>
@@ -67,16 +67,18 @@
             console.log(data);
           }, "json");
       });
-
+ 
        $('.file-link').click(function() {
        var path =  $(this).attr('rel');
-        $.post('/rules/read', { "path": path }, function(data) {
-          $("#rule-text").html(data);
+        $.post('/api/read', { "path": path }, function(data) {
+          for(var i in data) {
+            $("#rule-text").append(data[i] + '<br/>');
+          }
           $('#add-rule').css('display', 'block');
           $("#add-rule").attr('rel', path);
           $('#delete-rule').css('display', 'block');
           $("#delete-rule").attr('rel', path);
-        });
+        }, "json"); 
       });
 
 

@@ -26,6 +26,8 @@ exports.vsensor_load = function(req, res) {
 	fs.readFile(file, function(err, result) {
 		var parser = new xml2js.Parser();
 		parser.parseString(result, function(err, result) {
+      // console.log(typeof result);
+      // var lines = result.toString().split(/\r?\n/);
 			res.end(JSON.stringify(result));
 		});
 	});

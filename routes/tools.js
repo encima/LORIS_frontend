@@ -4,7 +4,8 @@ var config = require('../../config'),
     util = require('util'),
     mmm = require('mmmagic'),
     Magic = mmm.Magic,
-    exif = require('exif2');
+    exif = require('exif2'),
+    exiv = require('exiv2');
 
 
 exports.uploadImage = function(request, response){
@@ -25,6 +26,7 @@ exports.uploadImage = function(request, response){
         if(err) throw err;
         console.log(obj);
       });
+      
     }
   }); 
   
@@ -78,6 +80,7 @@ exports.deleteRule = function(request, response) {
 
 exports.readFile = function(req, res) {
   fs.readFile(req.body.path, 'utf8', function(err, data) {
-    res.end(JSON.stringify(data));
+    var lines = data.split(/\r?\n/);
+    res.json(lines);
   });
 };
