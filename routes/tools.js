@@ -56,7 +56,7 @@ exports.uploadRule = function(request, response){
   }else if(file.name.split('.').pop() == 'JPG') {
 
   }else if(file.name.split('.').pop() == 'kml') {
-    handleKML(file);
+    handleKML(file, body.project);
   }
 
   var magic = new Magic();
@@ -66,38 +66,58 @@ exports.uploadRule = function(request, response){
   });
 
   response.statusCode = 200;
-  response.redirect('/read');
+  response.redirect('/locations');
 };
 
-function handleKML(file) {
-  console.log(file.path);
+function handleKML(file, project) {
   fs.readFile(file.path, function(err, result) {
     var parser = new xml2js.Parser();
     parser.parseString(result, function(err, result) {
-       // Object.keys(result).forEach(function(key) {
-       //  console.log(key);
-       //  });
-      iterateObject(result, 0);
+      iterateKML(result, project);
+      fs.unlinkSync(file.path);
+      return 'KML Handled';
     });
   });
 }
 
-function iterateObject(object, level) {
+function iterateKML(object, project) {
   var objects = [];
   if(object instanceof Object) {
     Object.keys(object).forEach(function(key) {
       if(object[key] instanceof Object) {
-        console.log(level + ":" + key);
-        iterateObject(object[key], level++);
-        console.log('********')
-      }else{
-        console.log(key);
-        console.log(object[key]); 
+        if('Placemark' in object[key]) {
+          readPlacemarks(object[key]['Placemark']);
+        }
+        iterateKML(object[key], project);
       }
     });
-  }else{
-    console.log(object);
   }
+}
+
+function readPlacemarks(placemarks, project) {
+    var connection = db.initializeConnection();
+    connection.query("SELECT MAX(id) AS id FROM location;", function(err, rows, fields) {
+      if(err) throw err;
+      var id = 1;
+      if(rows[0]['id'] != undefined) {
+        id = rows[0]['id'] + 1;
+      }
+      for(var i = 0; i < placemarks.length; i++) {
+        if('Point' in placemarks[i] && placemarks[i]['Point'][0] != undefined) {
+          var pmark = [];
+          pmark['name'] = placemarks[i]['name'];
+          pmark['descrip'] = placemarks[i]['description'];
+          pmark['lng'] = placemarks[i]['Point'][0]['coordinates'][0].split(',')[0];
+          pmark['lat'] = placemarks[i]['Point'][0]['coordinates'][0].split(',')[1];
+          var insert = util.format("INSERT INTO location VALUES(%d, %d, %d, \"%s\", \"%s\");", id++, parseFloat(pmark['lat']), parseFloat(pmark['lng']), pmark['descrip'], project);               
+          connection.query(insert, function(err, rows, fields) {
+            if(err) throw err;
+            console.log(insert);
+            console.log('-------');
+          });
+        }
+      }
+    });
 }
 
 exports.deleteRule = function(request, response) {

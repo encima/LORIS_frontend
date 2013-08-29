@@ -13,6 +13,10 @@ exports.uploadImage = function(req, res){
   res.render('upload_image', { title: config.title });
 };
 
+exports.uploadLoc = function(req, res) {
+  res.render('upload_location', { title: config.title });	
+}
+
 exports.upload = function(req, res) {
 	res.render('upload', { title: config.title });	
 }
@@ -29,3 +33,11 @@ exports.listRules = function(req, res){
 		res.render('rules', {title: 'Fire Rules', rules: rows});	
 	});
 };
+
+exports.locations = function(req, res) {
+	var connection = db.initializeConnection();
+	connection.query("SELECT * FROM location;", function(err, rows, fields) {
+		if(err) throw err;
+		res.render('locations', {title: config.title, locations: rows, maps_key: config.google_maps_key});
+	});
+};	
