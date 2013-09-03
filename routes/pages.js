@@ -45,6 +45,11 @@ exports.locations = function(req, res) {
 
 exports.occurrences = function(req, res) {
 	var connection = db.initializeConnection();
+	var id = 2;
+	if(req.query.id != undefined) {
+		id = req.query.id;
+	}
+	console.log(id);
 	var query = "SELECT * \
 					FROM occurrence o \
 					LEFT JOIN location l \
@@ -52,12 +57,8 @@ exports.occurrences = function(req, res) {
 					LEFT JOIN  identification i \
 					ON o.eventid = i.id \
 					LEFT JOIN (SELECT eventid, GROUP_CONCAT(identifier) AS identifiers FROM imageset GROUP BY eventid) ic \
-					ON o.eventid = ic.eventid";
-	if(req.query.id != undefined) {
-		query += " WHERE o.eventid = " + req.query.id + ";";
-	}else{
-		query += ";";
-	}
+					ON o.eventid = ic.eventid \
+					WHERE o.eventid = " + id + ";";
 	connection.query(query , function(err, rows, fields) {
     	if(err) throw err;
     	console.log(rows);

@@ -18,25 +18,23 @@ ul li {
 #left-nav {
   height: 100%;
   float: left;
-  padding-right: 10px;
+  width: 15%;
   background: #c63d0f;
   color: #fdf3e7;
-  overflow: hidden;
 }
 #content {
   height: 100%;
+  width: 70%;
+  float: left;
   padding-top: 50px;
   padding-left: 10px;
-  overflow: hidden;
 }
 #left-content {
   height: 100%;
   float: left;
   padding-right: 10px;
-  overflow: hidden;
 }
 #right-content {
   height: 100%;
   padding-left: 10px;
-  overflow: hidden;
 }

@@ -1,9 +1,18 @@
 <%include base.ejs %>
     <div id="content">
+
    	<% for (var i in occs) {
     	var keys = Object.keys(occs[i])
-    	for(var j in keys) { %>
-    		<%=keys[j]%>: <%=occs[i][keys[j]]%><br/>
+    	for(var j in keys) { 
+    		if(keys[j] == 'identifiers') {
+    			var identifiers = occs[i][keys[j]].split(",");
+    			for(var j in identifiers) {
+    		%>
+    				<img src="<%=identifiers[j]%>"><br/>
+			<%	}
+				} else {%>
+    			<b><%=keys[j]%></b>: <%=occs[i][keys[j]]%><br/>
+    		<%}%>
     	<%}%>
     	<hr/>
     <%}%>
