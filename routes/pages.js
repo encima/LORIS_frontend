@@ -1,6 +1,7 @@
 var config = require('../config'),
     db = require('../local_db'),
     fs = require('fs'),
+    async = require('async'),
     util = require('util'),
     mmm = require('mmmagic'),
     Magic = mmm.Magic;
@@ -40,4 +41,26 @@ exports.locations = function(req, res) {
 		if(err) throw err;
 		res.render('locations', {title: config.title, locations: rows, maps_key: config.google_maps_key});
 	});
-};	
+};
+
+exports.occurrences = function(req, res) {
+	var connection = db.initializeConnection();
+	var query = "SELECT * \
+					FROM occurrence o \
+					LEFT JOIN location l \
+					ON o.locationid=l.id \
+					LEFT JOIN  identification i \
+					ON o.eventid = i.id \
+					LEFT JOIN (SELECT eventid, GROUP_CONCAT(identifier) AS identifiers FROM imageset GROUP BY eventid) ic \
+					ON o.eventid = ic.eventid";
+	if(req.query.id != undefined) {
+		query += " WHERE o.eventid = " + req.query.id + ";";
+	}else{
+		query += ";";
+	}
+	connection.query(query , function(err, rows, fields) {
+    	if(err) throw err;
+    	console.log(rows);
+		res.render('occurrences', {title: config.title, occs: rows});  
+	});
+}

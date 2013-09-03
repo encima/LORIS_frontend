@@ -1,0 +1,17 @@
+<%include base.ejs %>
+    <div id="content">
+   	<% for (var i in occs) {
+    	var keys = Object.keys(occs[i])
+    	for(var j in keys) { %>
+    		<%=keys[j]%>: <%=occs[i][keys[j]]%><br/>
+    	<%}%>
+    	<hr/>
+    <%}%>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+    <script>	
+
+    </script>
+  </body>
+</html>

@@ -43,9 +43,10 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/locations/upload', pages.uploadLoc);
+app.get('/', pages.occurrences);
 
 app.get('/locations', pages.locations)
+app.get('/locations/upload', pages.uploadLoc);
 
 app.get('/rules', pages.listRules);
 app.get('/rules/upload', pages.uploadRule);
