@@ -15,6 +15,22 @@ ul li {
 .button {
   background: #c63d0f;
 }
+.img-ul {
+  width: 100%;
+}
+.img-li {
+  display: inline-block;
+  list-style-type: none;
+  width: 30%;
+  opacity: 0.4;
+}
+.img-li:hover {
+  width: 35%;
+  opacity: 0.9;
+}
+.img-li img {
+  width: 100%;
+}
 #left-nav {
   height: 100%;
   float: left;

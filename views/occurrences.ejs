@@ -1,26 +1,33 @@
 <%include base.ejs %>
     <div id="content">
 
-   	<% for (var i in occs) {
-    	var keys = Object.keys(occs[i])
-    	for(var j in keys) { 
-    		if(keys[j] == 'identifiers') {
-    			var identifiers = occs[i][keys[j]].split(",");
-    			for(var j in identifiers) {
-    		%>
-    				<img src="<%=identifiers[j]%>"><br/>
-			<%	}
-				} else {%>
-    			<b><%=keys[j]%></b>: <%=occs[i][keys[j]]%><br/>
-    		<%}%>
-    	<%}%>
+   	<% for (var i in occs) { 
+
+    	var keys = Object.keys(occs[i]);
+    	var identifiers = occs[i]['identifiers'].split(","); %>
+    	<b>Event ID: </b><%=occs[i]['EVENTID']%><br/>
+    	<b>Date: </b><%=occs[i]['EVENTDATE']%><br/>
+    	<b>Time: </b><%=occs[i]['EVENTTIME']%><br/>
+		<ul class="img-ul">
+			<%for(var j in identifiers) {%>
+				<li class="img-li"><img src="<%=identifiers[j]%>"/></li>
+			<%	} %>
+		</ul>
+	<%}%>
+		What is in the image? 
+		<form id="classify-form">
+			<input type="text" id="contents" size="25">
+			<input type="submit" value="Classify!"><br>
+		</form>
     	<hr/>
-    <%}%>
     </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
     <script>	
-
+    	$("#classify-form").submit(function() {
+    		console.log($("#contents").val());
+    		return false;
+    	});
     </script>
   </body>
 </html>
