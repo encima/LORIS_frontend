@@ -14,6 +14,8 @@ import com.encima.utils.TimeTools
 
 import java.util.Collection;
 
+import java.util.Date;
+
 rule "Time Frame" 
 	when 
 		archive:DarwinCore(archive.getOcc().getEventDate() == "27-MAR-2012")
@@ -28,6 +30,11 @@ rule "Otter River"
 		eval(TimeTools.checkTimePeriod($dwc.getOcc().getEventTime()) == "Afternoon")
 	then
 		System.out.println("Otter");
+		int id = $dwc.getOcc().getEventID();
+		Date d = new Date();
+		Identification ident = new Identification(id, 1, d, 1);
+		$dwc.setId(ident);
+		System.out.println($dwc.getId());
 	end
 	
 rule "Plantation Night"
