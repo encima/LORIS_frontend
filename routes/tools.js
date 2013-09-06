@@ -137,3 +137,45 @@ exports.readFile = function(req, res) {
     res.json(lines);
   });
 };
+
+exports.identify = function(req, res) {
+  var eventID = req.body.eventID;
+  var identification = req.body.identification;
+  var idBy = req.body.idBy;
+  var connection = db.initializeConnection();
+  var now = new Date();  
+  async.series(
+    [function(callback) {
+      var connection = db.initializeConnection();
+      var check = util.format("SELECT id FROM species WHERE name = '%s';", identification);
+      connection.query(check, function(err, rows, fields) {
+        if(rows.length > 0) {
+          console.log(rows);
+          callback(null, rows[0]['id']);
+        }else{
+          connection.query("SELECT MAX(id) as id FROM species;", function(err, rows, field) {
+            if(err) throw err;
+            var id = 1;
+            console.log(id);
+            if(rows.length > 0) {
+              id = rows[0]['id'] + 1;
+            }
+            var insert = util.format("INSERT INTO species VALUES(%d, '%s', '');", id, identification);
+            console.log(insert);
+            connection.query(insert, function(err, rows, fields) {
+              if(err) res.json(err);
+              callback(null, id);
+            })        
+          });
+        }
+      });
+    }], 
+    function(err, results) {
+      var query = util.format("INSERT INTO identification VALUES(%d, '%s-%s-%s', %d, %d);", eventID, now.getFullYear(), now.getMonth(), now.getDay(), idBy, results[0]);
+      connection.query(query, function(err, rows, fields) {
+        if(err) res.json(err);
+        res.json('Response');  
+      });
+  });
+  
+}

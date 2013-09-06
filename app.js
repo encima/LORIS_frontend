@@ -60,6 +60,8 @@ app.post('/api/rule/delete', tools.deleteRule);
 app.get('/data', data.page);
 app.post('/api/locations', data.locations);
 
+app.post('/api/identify', tools.identify);
+
 app.get('/gsn/vsensor', gsn.vsensor);
 app.post('/api/get_vsensor', gsn.vsensor_load);
 

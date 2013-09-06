@@ -5,7 +5,7 @@
 
     	var keys = Object.keys(occs[i]);
     	var identifiers = occs[i]['identifiers'].split(","); %>
-    	<b>Event ID: </b><%=occs[i]['EVENTID']%><br/>
+    	<b>Event ID: </b><p id="eventID"><%=occs[i]['EVENTID']%></p><br/>
     	<b>Date: </b><%=occs[i]['EVENTDATE']%><br/>
     	<b>Time: </b><%=occs[i]['EVENTTIME']%><br/>
 		<ul class="img-ul">
@@ -26,6 +26,11 @@
     <script>	
     	$("#classify-form").submit(function() {
     		console.log($("#contents").val());
+        $.post("/api/identify",
+            { eventID: $("#eventID").text(), identification: $("#contents").val(), idBy: 1},
+          function(data) {
+            console.log(data);
+          }, "json");   
     		return false;
     	});
     </script>
