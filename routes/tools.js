@@ -7,6 +7,7 @@ var config = require('../config'),
     exiv = require('exiv2'),
     xml2js = require('xml2js'),
     async = require('async'),
+    AWS = require('aws-sdk'),
     mmm = require('mmmagic'),
     Magic = mmm.Magic;
 
@@ -141,7 +142,7 @@ exports.readFile = function(req, res) {
 
 exports.identify = function(req, res) {
   var eventID = req.body.eventID;
-  var identification = req.body.identification;
+  var identification = req.body.identification.toLowerCase();
   var idBy = req.body.idBy;
   var connection = db.initializeConnection();
   var now = new Date();  
@@ -175,7 +176,7 @@ exports.identify = function(req, res) {
       var query = util.format("INSERT INTO identification VALUES(%d, '%s-%s-%s', %d, %d);", eventID, now.getFullYear(), now.getMonth(), now.getDay(), idBy, results[0]);
       connection.query(query, function(err, rows, fields) {
         if(err) res.json(err);
-        res.json('Classified!');  
+        res.json({ content: identification });
       });
   });
 };
@@ -188,38 +189,46 @@ exports.createDWC = function(req, res) {
   var data = img.replace(/^data:image\/\w+;base64,/, "");
   var buf = new Buffer(data, 'base64');
   var date = new Date();
-  var path = './uploads/dwc_' + date.getHours() + '' + date.getMinutes();
+  // var path = './uploads/dwc_' + date.getHours() + '' + date.getMinutes();
   // create folder and write image
-  mkdirp(path, function(err) {
-    if(err)
-      throw err;
-    fs.writeFile(path + '/image.png', buf, function(err) {
-      if(err)
-        throw err;
-    });
-  });
-  // Create DB connection and update all tables
-  var connection = db.initializeConnection();
-  add_loc(connection, lat, lng, function(loc_id) {
-    connection.query("SELECT MAX(EVENTID) as id FROM occurrence;", function(err, rows, fields) {
-      if(err) throw err;
-      var id = 1;
-      if(rows.length > 0) id = rows[0]['id'] + 1;
-      console.log('Adding occurrence');
-      var occ = util.format("INSERT INTO occurrence VALUES(NULL, %d, %d, 'MOVINGIMAGE', '%s', '%s', %d, %d);", date.getTime(), id, date, date, loc_id, 1);
-      console.log(occ);
-      connection.query(occ, function(err, rows, fields) {
+  // mkdirp(path, function(err) {
+  //   if(err)
+  //     throw err;
+  //   fs.writeFile(path + '/image.png', buf, function(err) {
+  //     if(err)
+  //       throw err;
+  //   });
+  // });
+
+  AWS.config.loadFromPath('./s3.json');
+  var s3 = new AWS.S3();
+  var prefix = 'https://s3-eu-west-1.amazonaws.com/sitesy/' 
+  var file =  date.getTime() + '.png';
+  s3.putObject({Bucket: 'sitesy', Key: file, Body: buf, ACL:'public-read'}, function(err, data) {
+    if (err) throw err;
+    console.log('Uploaded to S3');
+    var connection = db.initializeConnection();
+    add_loc(connection, lat, lng, function(loc_id) {
+      connection.query("SELECT MAX(EVENTID) as id FROM occurrence;", function(err, rows, fields) {
         if(err) throw err;
-        var is = util.format("INSERT INTO imageset VALUE(%d, '%s');", id, path);
-        console.log(is);
-        connection.query(is, function(err, rows, fields) {
+        var id = 1;
+        if(rows.length > 0) id = rows[0]['id'] + 1;
+        console.log('Adding occurrence');
+        var occ = util.format("INSERT INTO occurrence VALUES(NULL, %d, %d, 'MOVINGIMAGE', '%s', '%s', %d, %d);", date.getTime(), id, date, date, loc_id, 1);
+        console.log(occ);
+        connection.query(occ, function(err, rows, fields) {
           if(err) throw err;
-          res.json('{Created Occurrence ' + id + '};');
+          var is = util.format("INSERT INTO imageset VALUE(%d, '%s');", id, prefix + file);
+          console.log(is);
+          connection.query(is, function(err, rows, fields) {
+            if(err) throw err;
+            res.json('{Created Occurrence ' + id + '};');
+          });
         });
       });
     });
   });
-  
+  // Create DB connection and update all tables
 };
 
 function add_loc(connection, lat, lng, callback) { 

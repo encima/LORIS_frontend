@@ -54,14 +54,15 @@ exports.occurrences = function(req, res) {
 					LEFT JOIN (SELECT eventid, GROUP_CONCAT(identifier) AS identifiers FROM imageset GROUP BY eventid) ic \
 					ON o.eventid = ic.eventid";
 	if(req.query.id != undefined) {
-		query += "WHERE o.eventid = " + req.query.id + ";";
+		query += " WHERE o.eventid = " + req.query.id + ";";
 	}else{
 		query += " LIMIT 1;";
 	}
+	console.log(query);
 	connection.query(query , function(err, rows, fields) {
     	if(err) throw err;
     	console.log(rows);
-		res.render('occurrences', {title: config.title, occs: rows});  
+		res.render('occurrences', {title: config.title, occs: rows, maps_key: config.google_maps_key});  
 	});
 };
 
