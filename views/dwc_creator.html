@@ -1,0 +1,118 @@
+
+<html>
+  <head>
+    <title>LORIS</title>
+
+    <style>
+        body{font-family:Sans-Serif;}
+        canvas{position:absolute; left: -9999em;}
+        .button{background-color: Red; color: #fff; padding: 3px 10px; cursor:pointer; display: inline-block; border-radius: 5px;}
+        #sidebar{float:right; width: 45%;}
+        #main{float:left; width: 45%;}
+        #imageToForm{width:100%;}
+        #preview{margin: 20px 0;}
+        label{display: block;}
+    </style>
+  </head>
+  <body>
+  <h1> Occurrence Creator</h1>
+    <div id="main">
+        <video id="video"></video>
+        <p id="loc">Take a picture to get your coordinates:</p>
+
+    </div>
+
+    <div id="sidebar">
+        <a id="capture" class="button">Capture</a>
+        <a id="create" class="button">Create</a>
+        <!-- target for the canvas-->
+        <div id="canvasHolder"></div>
+
+        <!--preview image captured from canvas-->
+        <img id="preview" src="http://www.clker.com/cliparts/A/Y/O/m/o/N/placeholder-hi.png" width="160" height="120" />
+
+        <label>base64 image:</label>
+        <input id="imageToForm" type="text" />
+  
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+// LOCATION
+    var x=document.getElementById("loc");
+    var lat = 0;
+    var lng = 0;
+    function getLocation()
+      {
+      if (navigator.geolocation)
+        {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        }
+      else{x.innerHTML="Geolocation is not supported by this browser.";}
+      }
+    function showPosition(position)
+      {
+        lat = position.coords.latitude;
+        lng = position.coords.longitude;
+        x.innerHTML="Latitude: " + lat + 
+        "<br>Longitude: " + lng;    
+      }
+
+// CAMERA
+        var video;
+        var dataURL;
+        //http://coderthoughts.blogspot.co.uk/2013/03/html5-video-fun.html - thanks :)
+        function setup() {
+            navigator.myGetMedia = (navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia);
+            navigator.myGetMedia({ video: true }, connect, error);
+        }
+
+        function connect(stream) {
+            video = document.getElementById("video");
+            video.src = window.URL ? window.URL.createObjectURL(stream) : stream;
+            video.play();
+        }
+
+        function error(e) { console.log(e); }
+
+        addEventListener("load", setup);
+
+        function captureImage() {
+            getLocation();
+            var canvas = document.createElement('canvas');
+            canvas.id = 'hiddenCanvas';
+            //add canvas to the body element
+            document.body.appendChild(canvas);
+            //add canvas to #canvasHolder
+            document.getElementById('canvasHolder').appendChild(canvas);
+            var ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth / 4;
+            canvas.height = video.videoHeight / 4;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            //save canvas image as data url
+            dataURL = canvas.toDataURL();
+            //set preview image src to dataURL
+            document.getElementById('preview').src = dataURL;
+            // place the image value in the text box
+            document.getElementById('imageToForm').value = dataURL;
+        }
+
+        //Bind a click to a button to capture an image from the video stream
+        var el = document.getElementById("capture");
+        el.addEventListener("click", captureImage, false);
+// JQUERY AJAX POST
+    $("#create").click(function() {
+        console.log(lat);
+        console.log(lng)
+        $.post("/api/create",
+            { img: dataURL, latitude: lat, longitude: lng},
+          function(data) {
+            console.log(data);
+          }, "json");   
+    });
+    </script>
+  </body>
+</html>

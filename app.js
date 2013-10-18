@@ -68,6 +68,9 @@ app.post('/api/get_vsensor', gsn.vsensor_load);
 app.get('/image/upload', pages.uploadImage);
 app.post('/api/image/upload', tools.uploadImage);
 
+app.get('/create/', pages.create);
+app.post('/api/create', tools.createDWC);
+
 http.createServer(app).listen(config.port, function(){
   console.log('Express server listening on port ' + config.port);
 });

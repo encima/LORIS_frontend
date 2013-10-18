@@ -29,7 +29,7 @@ exports.uploadRule = function(request, response){
     response.send('Not a rule file!');  
   }
 
-  var magic = new Magic();
+  var magic = new Magic(); 
   magic.detectFile(file.path, function(err, result) {
     if (err) throw err;
     console.log(result);

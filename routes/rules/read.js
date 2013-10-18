@@ -1,6 +1,5 @@
 var util = require('util');
 var db = require('../../local_db');
-var soap = require('soap');
 var fs =  require('fs');
 var id = 1;
 

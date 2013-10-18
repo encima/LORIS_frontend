@@ -45,11 +45,6 @@ exports.locations = function(req, res) {
 
 exports.occurrences = function(req, res) {
 	var connection = db.initializeConnection();
-	var id = 2;
-	if(req.query.id != undefined) {
-		id = req.query.id;
-	}
-	console.log(id);
 	var query = "SELECT * \
 					FROM occurrence o \
 					LEFT JOIN location l \
@@ -57,11 +52,26 @@ exports.occurrences = function(req, res) {
 					LEFT JOIN  identification i \
 					ON o.eventid = i.id \
 					LEFT JOIN (SELECT eventid, GROUP_CONCAT(identifier) AS identifiers FROM imageset GROUP BY eventid) ic \
-					ON o.eventid = ic.eventid \
-					WHERE o.eventid = " + id + ";";
+					ON o.eventid = ic.eventid";
+	if(req.query.id != undefined) {
+		query += "WHERE o.eventid = " + req.query.id + ";";
+	}else{
+		query += " LIMIT 1;";
+	}
 	connection.query(query , function(err, rows, fields) {
     	if(err) throw err;
     	console.log(rows);
 		res.render('occurrences', {title: config.title, occs: rows});  
 	});
-}
+};
+
+exports.create = function(req, res) {
+	fs.readFile('./views/dwc_creator.html', function (err, html) {
+	    if (err) {
+	        throw err; 
+	    }       
+        res.writeHeader(200, {"Content-Type": "text/html"});  
+        res.write(html);  
+        res.end();  
+	});
+};

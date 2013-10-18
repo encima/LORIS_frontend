@@ -1,11 +1,14 @@
 <% include base.ejs %>
   <div id="content">
+  <div id="left-content">
   	<h2>Upload an Image</h2>
-    <form action="/api/image/upload" method="post"
-enctype="multipart/form-data">
-<label for="file">Image:</label>
-<input type="file" name="file" id="file"><br>
-<input type="submit" name="submit" value="Submit">
-</form>
-  </div>
+    <form action="/api/image/upload" method="post" enctype="multipart/form-data">
+		<label for="file">Image:</label>
+		<input type="file" name="file" id="file"><br>
+		<input type="submit" name="submit" value="Submit">
+	</form>
+	<hr/>
+	</div>
+ </div>
+ </body>
 </html>

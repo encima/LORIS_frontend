@@ -1,35 +1,45 @@
 <%include base.ejs %>
     <div id="content">
-
-   	<% for (var i in occs) { 
-
-    	var keys = Object.keys(occs[i]);
-    	var identifiers = occs[i]['identifiers'].split(","); %>
-    	<b>Event ID: </b><p id="eventID"><%=occs[i]['EVENTID']%></p><br/>
-    	<b>Date: </b><%=occs[i]['EVENTDATE']%><br/>
-    	<b>Time: </b><%=occs[i]['EVENTTIME']%><br/>
-		<ul class="img-ul">
-			<%for(var j in identifiers) {%>
-				<li class="img-li"><img src="<%=identifiers[j]%>"/></li>
-			<%	} %>
-		</ul>
-	<%}%>
+    <%if(occs.length > 0) {
+       	for (var i in occs) { 
+        	var keys = Object.keys(occs[i]);
+            console.log(keys);
+        	var identifiers = occs[i]['identifiers'].split(","); %>
+        	<b>Event ID: </b><p id="eventID"><%=occs[i]['EVENTID']%></p><br/>
+        	<b>Date: </b><%=occs[i]['EVENTDATE']%><br/>
+        	<b>Time: </b><%=occs[i]['EVENTTIME']%><br/>
+            <b>Lat: </b><%=occs[i]['lat']%><br/>
+            <b>Lng: </b><%=occs[i]['lng']%><br/>
+    		<ul class="img-ul">
+    			<%for(var j in identifiers) {%>
+    				<li class="img-li"><img src="<%=identifiers[j]%>"/></li>
+    			<%	} %>
+    		</ul>
+    	<%}%>
 		What is in the image? 
 		<form id="classify-form">
 			<input type="text" id="contents" size="25">
-			<input type="submit" value="Classify!"><br>
+			<input type="submit" id="submitBtn" value="Classify!"><br>
 		</form>
     	<hr/>
     </div>
+    <%}else{%>
+        No Occurrences Here!
+    <%}%>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
-    <script>	
+    <script>
+        $(document).ready(function() {
+
+        });
     	$("#classify-form").submit(function() {
     		console.log($("#contents").val());
         $.post("/api/identify",
             { eventID: $("#eventID").text(), identification: $("#contents").val(), idBy: 1},
           function(data) {
             console.log(data);
+            document.getElementById("submitBtn").disabled=true;
+            alert(data);
           }, "json");   
     		return false;
     	});

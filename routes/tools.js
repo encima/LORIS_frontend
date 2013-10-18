@@ -1,6 +1,7 @@
-var config = require('../../config'),
+var config = require('../config'),
     db = require('../local_db'),
     fs = require('fs'),
+    mkdirp = require('mkdirp'),
     util = require('util'),
     exif = require('exif2'),
     exiv = require('exiv2'),
@@ -174,8 +175,76 @@ exports.identify = function(req, res) {
       var query = util.format("INSERT INTO identification VALUES(%d, '%s-%s-%s', %d, %d);", eventID, now.getFullYear(), now.getMonth(), now.getDay(), idBy, results[0]);
       connection.query(query, function(err, rows, fields) {
         if(err) res.json(err);
-        res.json('Response');  
+        res.json('Classified!');  
       });
   });
+};
+
+exports.createDWC = function(req, res) {
+  var lat = req.body.latitude;
+  var lng = req.body.longitude;
+  var img = req.body.img;
+  // strip off the data: url prefix to get just the base64-encoded bytes
+  var data = img.replace(/^data:image\/\w+;base64,/, "");
+  var buf = new Buffer(data, 'base64');
+  var date = new Date();
+  var path = './uploads/dwc_' + date.getHours() + '' + date.getMinutes();
+  // create folder and write image
+  mkdirp(path, function(err) {
+    if(err)
+      throw err;
+    fs.writeFile(path + '/image.png', buf, function(err) {
+      if(err)
+        throw err;
+    });
+  });
+  // Create DB connection and update all tables
+  var connection = db.initializeConnection();
+  add_loc(connection, lat, lng, function(loc_id) {
+    connection.query("SELECT MAX(EVENTID) as id FROM occurrence;", function(err, rows, fields) {
+      if(err) throw err;
+      var id = 1;
+      if(rows.length > 0) id = rows[0]['id'] + 1;
+      console.log('Adding occurrence');
+      var occ = util.format("INSERT INTO occurrence VALUES(NULL, %d, %d, 'MOVINGIMAGE', '%s', '%s', %d, %d);", date.getTime(), id, date, date, loc_id, 1);
+      console.log(occ);
+      connection.query(occ, function(err, rows, fields) {
+        if(err) throw err;
+        var is = util.format("INSERT INTO imageset VALUE(%d, '%s');", id, path);
+        console.log(is);
+        connection.query(is, function(err, rows, fields) {
+          if(err) throw err;
+          res.json('{Created Occurrence ' + id + '};');
+        });
+      });
+    });
+  });
   
-}
+};
+
+function add_loc(connection, lat, lng, callback) { 
+  var check_loc = util.format("SELECT id FROM location WHERE lat=%d AND lng=%d;", lat, lng);
+  connection.query(check_loc, function(err,rows,fields) {
+    if(err) throw err;
+    var id = 1;
+    if(rows.length > 0) {
+      console.log('loc exists');
+      id = rows[0]['id'];
+      callback(id);
+    }else{
+      console.log('creating loc');
+      connection.query("SELECT MAX(id) as id from location", function(err, rows, fields) {
+        if(err) throw err;
+        var loc_id = 1;
+        if(rows.length > 0) loc_id = rows[0]['id'] + 1;
+        var insert = util.format("INSERT INTO location VALUES(%d, %d, %d, 'NULL', 'NULL');", loc_id, lat, lng);
+        connection.query(insert, function(err, rows, fields) {
+          if(err) throw err;
+          console.log('Created loc');
+          callback(loc_id);
+        });          
+      });
+    }
+  });
+};
+
