@@ -33,7 +33,7 @@
           url: "http://localhost:8000/api/rule/delete",
           data: {"file": $(this).attr('rel')},
           success: function(data) {
-            console.log(data)
+            alert(data);
             location.reload();
           },
           dataType: "json"
@@ -48,7 +48,7 @@
           url: "http://localhost:8111/api/drools/add",
           data: {"file": $(this).attr('rel')},
           success: function(data) {
-            console.log(data);
+            alert(data);
           },
           dataType: "json"
         });
@@ -57,14 +57,14 @@
       $('#fire-engine').click(function() {
         $.post("http://localhost:8111/api/drools/fire",
           function(data) {
-            console.log(data);
+            alert(data);
           }, "json");
       });
 
       $('#load-dwc').click(function() {
         $.post("http://localhost:8111/api/drools/load",
           function(data) {
-            console.log(data);
+            alert(data);
           }, "json");
       });
  
